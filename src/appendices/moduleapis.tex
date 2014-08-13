@@ -1,0 +1,41 @@
+\chapter{CRAFTS Module Interfaces}
+\label[app]{ap:craftsapi}
+
+\section{MAL}
+\begin{lstlisting}[language=python]
+class MALDriver(object):
+    def get_metrics(self, start, stop):
+\end{lstlisting}
+
+\section{Predictor}
+\begin{lstlisting}[language=python]
+class Predictor(object):
+    def predict(self, window, start_time, cycle_size):
+\end{lstlisting}
+
+\section{Planner}
+\begin{lstlisting}[language=python]
+class Planner(object):
+    
+\end{lstlisting}
+
+\section{Cluster Manager}
+\begin{lstlisting}[language=python]
+class Scaler(object):
+    def schedule_event(self, role, time, count):
+
+    def describe_cluster(self):
+\end{lstlisting}
+
+\section{Tuner}
+\begin{lstlisting}[language=python,breaklines=true]
+class ErrorMatrix(object):
+
+def evaluate(actual_collection, predicted_collection, metric, measure):
+
+def validate(db, role, metric, measure, start, window_size, cycle_size, num_folds, predictor_cls):
+
+def optimization_func(params, db, role, metric, measure, start, window_size, cycle_size, num_folds, predictor_cls):
+
+def tune(db, role, metric, measure, start, window_size, cycle_size, num_folds, predictor_cls):
+\end{lstlisting}

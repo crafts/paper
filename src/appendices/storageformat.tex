@@ -1,0 +1,27 @@
+\chapter{Intermediate Storage Format}
+\label[app]{ap:storage}
+
+An example intermediate storage entry can be found at the end of this appendix. Below is a description of all fields which must be present in a valid sample document.
+\begin{itemize}
+\item \textbf{\_id:} Uniquely identifies the document within CouchDB. For sample documents, the id takes the form: ``\texttt\item \{role/timestamp/sample\}.''
+\item \textbf{\_rev} The revision field. Used by CouchDB for consistency.
+\item \textbf{timestamp:} The UTC time at which the sample was taken.
+\item \textbf{role:} The role for which the sample was taken.
+\item \textbf{hosts:} A list of all hosts within the role and a dictionary of the metrics recorded and their values.
+\item \textbf{type:} Identifies the type of document. In this case it will always be ``sample.''
+\end{itemize}
+
+\begin{lstlisting}[language=json]
+{
+    "_id": "arts/2007-09-18T20:10:00/sample",
+    "_rev": "1-74ec4360a516ae634edb61f840b12758",
+    "timestamp": "2007-09-18T20:10:00",
+    "role": "arts",
+    "hosts": {
+        "arts-1": {
+            "requests": 3025
+        }
+    },
+    "type": "sample"
+}
+\end{lstlisting}

@@ -1,0 +1,14 @@
+\chapter{Conclusions}
+\label{ch:conclusions}
+
+\section{ARTS Workload Quality}
+The workloads we attempted to generate through ARTS' layered transformations proved to not be as realistic as we had hoped. The transformations implemented simply could not capture all of the complexities of workloads seen in modern-day web applications. In our evaluation, even when filtering out 96\% of frequencies from the Wikipedia workload data, this still leaves over 80 dominant frequencies in the data. Representing this complexity in an ARTS workload using the current architecture would prove difficult to impossible for an average user.
+
+\section{Predictor Evaluation}
+Based on the results of our evaluation, the linear regression proved to be the most effective method of prediction. The linear regression predictor had the lowest RMSDs for regular traffic and was tolerant to every anomaly we tested.
+
+\section{Short-term Predictors}
+Both the Markov chain and exponential smoothing predictors can only make predictions a short amount of time into the future. While this gave them an advantage when predicting regular traffic, it proved to be a problem when these predictors came across anomalies. Furthermore, with a prediction horizon so small, it is impossible for the \textsf{planner} to do its job effectively. The goal of the planner is to group scaling requests together on an interval to ensure that plans are easy for an engineer to read and update in the future if necessary.
+
+\section{Tuner Effectiveness}
+In our evaluation of the FFT predictor, we found that our \textsf{tuner} implementation is not effective for all types of parameters. In the case of FFT, we saw that the \textsf{tuner} optimized parameter values were too low to filter out anomalies in the training data. There are two deficiencies in our tuning algorithm which caused this problem. First, since we weight all data equally during tuning, the effects of anomalies can become muted among the rest of the data. A solution to this would be to implement an algorithm similar to our evaluation methodology which weights error around anomalies much more heavily than regular traffic. Second, since we only observe a portion of past data in order to perform our tuning, it is possible that this window will contain no anomalies. It is also possible that the dataset contains no anomalies at all. Solving this problem would prove to be much more difficult.

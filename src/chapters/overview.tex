@@ -1,0 +1,34 @@
+\chapter{System Overview}
+\label{ch:overview}
+CRAFTS (Cloud Resource Anticipation For Timing Scaling) is a system for automatically identifying application throughput and predictively scaling cloud computing resources based on historical data. By taking past monitoring data such as requests per second and request latency, CRAFTS calculates the optimal throughput of the application it is monitoring and uses this data to make a direct translation between incoming traffic and the number of servers required to handle the capacity and maintain availability.
+
+Since it is uncommon for companies to publish exact numbers about their web traffic over large periods of time, evaluating the effectiveness of CRAFTS' prediction algorithms in a real world scenario is difficult to accomplish. To fill this need, we have developed ARTS (Automated Request Trace Simulator), a request based workload generation tool for constructing diverse and realistic request patterns for modern web applications. ARTS allows us to evaluate CRAFTS' algorithms on a wide range of scenarios.
+
+\section{Requirements}
+When deployed, CRAFTS would serve a mission-critical function to the service which it monitors. Because of this, it is important that CRAFTS meet a very strict set of requirements to ensure that engineers can be confident in its predictions.
+
+\subsection{CRAFTS Requirements}
+
+\paragraph{Modular.} There is no ``one size fits all'' way to manage a cluster. It is important that the different pieces of CRAFTS can act independently of one another so alternate modules can be swapped in based on the application's needs. Modularity allows CRAFTS to integrate with many different monitoring systems and cloud service providers. This also means that CRAFTS can swap in different prediction methods based on what method would work best for the traffic patterns seen by the application which it is monitoring.
+
+\paragraph{Available.} Because CRAFTS is responsible for the availability of entire systems, many of which may offer their own service level agreements on performance and availability, CRAFTS shall support some method of crash recovery which will allow it to continue to make predictions even in the event of a failure.
+
+\paragraph{Independent.} CRAFTS must not require knowledge of application code in order to make its predictions. While this information can be provided to and used by CRAFTS, it should only serve to increase the accuracy of CRAFTS predictions. All of CRAFTS predictions should be made solely based on metrics available through the monitoring API which it has access to.
+
+\paragraph{Scalable.} The services which CRAFTS monitors will likely not be comprised of a single component type. For example, many web sites have front-end servers which handle the rendering of HTML templates to be returned to the browser, as well as application servers which handle the business logic of the application. CRAFTS must provide a mechanism to scale multiple components independently of one another.
+
+\paragraph{Configurable.} CRAFTS will be using throughput to calculate how many nodes are required to handle load, but requirements for latency vary wildly from application to application, it is necessary for CRAFTS to allow for the specification of desired latency in order to make cost-effective scaling decisions.
+
+\paragraph{Anomalous Load Tolerance.} CRAFTS predictions need to tolerate the presence of anomalies in monitoring data. This includes system outages, usage spikes from denial of service attacks, and viral traffic. While it is necessary to account for this data in real-time scaling decisions, it has a negative impact on the quality of historical data used for making predictions.
+
+\paragraph{Self-tuning.} If the throughput of a system component fluctuates, CRAFTS shall take this information into account in its predictions. Additionally, if CRAFTS detects that it is consistently over or under allocating capacity, it must take steps to alter future predictions to better fit actual demand.
+
+\paragraph{User Interface.} It should be as simple as possible for engineers to get insight into the effectiveness of CRAFTS' predictions. The most straightforward way to accomplish this is to offer a simple user interface which can chart CRAFTS predicted demand vs. observed demand.
+
+\subsection{ARTS Requirements}
+
+\paragraph{Reproducible.} In order to perform effective benchmarking of CRAFTS' prediction techniques, workloads produced by ARTS need to reproducible. This way, prediction methods can be re-tuned and tested against the same set of test data and allow for a direct comparison of results.
+
+\paragraph{Realistic.} Usage patterns produced by ARTS shall be as representative of real-world situations as possible. Request-based traffic cannot be realistically modeled with a continuous curve, minor and even major fluctuations in traffic around a central curve are inevitable. Patterns also exist over periods larger than a single day. For example, most applications not only experience traffic periodicity on a daily basis, but also show patterns in weekly access. Hopefully, these applications are also seeing growth over time as well. Being able to handle astronomic rises to popularity is a staple of the cloud and shall be represented in the workloads used to test CRAFTS.
+
+\paragraph{Comprehensive.} ARTS shall be able to test every requirement of CRAFTS. For example, ARTS must be able to produce workloads which show small changes over time or changes in underlying application performance which would force CRAFTS to automatically tune its algorithms. These workloads must also include anomalous activity like outages and usage spikes to ensure CRAFTS can account for them.

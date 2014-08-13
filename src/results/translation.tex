@@ -1,0 +1,98 @@
+\begin{table}[H]
+\centering
+\begin{tabular}{| l | l | l |}
+\hline
+Type & RMSD & Percent \\ \hline
+Under & 143 & 75.1\% \\ \hline
+Over & 59 & 24.9\% \\ \hline
+Total & 127 & \\ \hline
+\end{tabular}
+\caption{Translation predictor results for the baseline workload}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{results/graphs/translation_baseline.png}
+\caption{Translation prediction results for the baseline workload}
+\label{fig:translation_b}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{| l | l | l | l | l |}
+\hline
+Type & \multicolumn{2}{c |}{Regular} & \multicolumn{2}{c |}{Anomalous} \\ \hline
+ & RMSD & Percent & RMSD & Percent \\ \hline
+Under & 180 & 75.0\% & 3047 & 100.0\% \\ \hline
+Over & 59 & 25.0\% & 0 & 0.0\% \\ \hline
+Total & 158 & & 3047 & \\ \hline
+\end{tabular}
+\caption{Translation predictor results for the training outage workload}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{results/graphs/translation_training_outage.png}
+\caption{Translation prediction results for the training outage workload}
+\label{fig:translation_to}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{| l | l | l | l | l |}
+\hline
+Type & \multicolumn{2}{c |}{Regular} & \multicolumn{2}{c |}{Anomalous} \\ \hline
+ & RMSD & Percent & RMSD & Percent \\ \hline
+Under & 142 & 74.9\% & 0 & 0.0\% \\ \hline
+Over & 187 & 25.1\% & 2864 & 100.0\% \\ \hline
+Total & 155 & & 2864 & \\ \hline
+\end{tabular}
+\caption{Translation predictor results for the horizon outage workload}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{results/graphs/translation_horizon_outage.png}
+\caption{Translation prediction results for the horizon outage workload}
+\label{fig:translation_ho}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{| l | l | l | l | l |}
+\hline
+Type & \multicolumn{2}{c |}{Regular} & \multicolumn{2}{c |}{Anomalous} \\ \hline
+ & RMSD & Percent & RMSD & Percent \\ \hline
+Under & 143 & 75.0\% & 0 & 0.0\% \\ \hline
+Over & 177 & 25.0\% & 2636 & 100.0\% \\ \hline
+Total & 152 & & 2636 & \\ \hline
+\end{tabular}
+\caption{Translation predictor results for the training spike workload}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{results/graphs/translation_training_spike.png}
+\caption{Translation prediction results for the training spike workload}
+\label{fig:translation_ts}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{| l | l | l | l | l |}
+\hline
+Type & \multicolumn{2}{c |}{Regular} & \multicolumn{2}{c |}{Anomalous} \\ \hline
+ & RMSD & Percent & RMSD & Percent \\ \hline
+Under & 185 & 75.1\% & 3260 & 100.0\% \\ \hline
+Over & 59 & 24.9\% & 0 & 0.0\% \\ \hline
+Total & 163 & & 3260 & \\ \hline
+\end{tabular}
+\caption{Translation predictor results for the horizon spike workload}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{results/graphs/translation_horizon_spike.png}
+\caption{Translation prediction results for the horizon spike workload}
+\label{fig:translation_hs}
+\end{figure}

@@ -1,0 +1,43 @@
+\chapter{Running CRAFTS}
+\label[app]{ap:installing}
+This appendix outlines instructions on how to install, setup, and run an instance of CRAFTS. Further details of how to configure CRAFTS can be found in \Cref{ap:craftsconfig}.
+
+\section{Installation}
+CRAFTS supports a number of methods of installation. Below are detailed instructions for each of the deployment methods which CRAFTS offers. This guide assumes, unless stated otherwise, that a CouchDB instance is already accessible to the user.
+
+\paragraph{Source.}
+\texttt{Git} is required in order to acquire the CRAFTS source. To download the source, simply run:
+
+\texttt{git clone git://github.com/crafts/crafts-core.git}
+
+\noindent
+This will create the \texttt{crafts-core} folder which contains all code necessary to run CRAFTS. 
+
+\paragraph{Pip.} Installing with pip is quick and easy. Simply run:
+
+\texttt{pip install crafts-core}
+
+\paragraph{Docker.} Launching a Docker container requires a copy of the source code. Inside of the \texttt{crafts-core} directory is a \texttt{Dockerfile}, build the Docker container by running the following command:
+
+\texttt{docker build -t crafts/crafts-core .}
+
+\noindent
+The Docker container comes with a CouchDB instance pre-installed and configured.
+
+\paragraph{Vagrant.} Launching a VM through Vagrant requires a copy of the source code. Inside of the \texttt{crafts-core} directory is a \texttt{Vagrantfile}. From within the directory, run:
+
+\texttt{vagrant up}
+
+\noindent
+to launch the CRAFTS VM. This VM includes a local pre-configured instance of CouchDB.
+
+\section{Setup}
+Setup is as simple as using the \texttt{crafts-cli} utility to configure a running CouchDB instance. Assuming the CouchDB instance is running locally, this can be done by running:
+
+\texttt{crafts-cli init config.json}
+
+\noindent
+Further Information about the CRAFTS configuration file can be found in \Cref{ap:craftsconfig}. If CouchDB is installed remotely, run \texttt{crafts-cli help} to see the necessary flags.
+
+\section{Running}
+The primary executable for CRAFTS is the CRAFTS daemon, \texttt{craftsd}. Each of the installation methods above, except source, will add \texttt{craftsd} to the \texttt{PATH}. If CRAFTS was installed from source, \texttt{craftsd} can be found in the \texttt{crafts} directory beneath \texttt{crafts-core}.

@@ -1,0 +1,51 @@
+\chapter{Evaluation}
+In order to evaluate the effectiveness of CRAFTS' prediction methods, we run each method on the workloads outlined in \Cref{ch:workloads}. At the beginning of each experiment, the tuner is run on the baseline workload to tune the parameters of the prediction algorithm. This is done to ensure that the tuning is done with minimal anomalies present. Tuning in this way allows us to see how the various algorithms respond to anomalies after an extended period of ``regular'' traffic.
+
+Each predictor will attempt to predict traffic for the week of October 14th in each workload and can use how ever much data it needs before that time for training. The effectiveness of each algorithm is measured using root mean squared deviation (RMSD), as discussed in \Cref{eq:rmsd}. We further break the results down into over-estimations and under-estimations, giving the RMSD for each as well as the percent of predictions which fell into each category. This is done because, in a real-world environment, under-estimations are more costly than over-estimations and we would favor predictors which are more likely to over-estimate than under-estimate. In workloads which contain anomalies, we analyze how the predictor performs during the anomaly separately from how it performs during normal traffic. This allows us to get a more complete view of how a predictor handles anomalies.
+
+In the baseline workload, the goal is to minimize the RMSD for all types. The same is true for regular traffic in all anomalous workloads. For the anomalous training workloads, the predictor should ideally minimize RMSD of all types as well. This result would mean that the anomaly in the training data did not affect the future predictions. In the outage horizon workload, we want to see 100\% over-estimation and maximize over-estimation RMSD during this time. This means that the predictor has successfully ignored the outage. Inversely, we want to see 100\% underestimation and maximize under-estimation RMSD for the spike training workload. These values indicate that the spike was successfully ignored.
+
+The following sections include the evaluation results for each predictor and an analysis of those results. In the graphs below, the light blue line represents the observed data and the black line shows our own predictions.
+
+\section{Translation}
+Results for regular traffic show that the translation predictor is prone to underestimation. This is likely due to fluctuations in week by week traffic or a linear trend in the data. In the case of the latter, translation would not be able to account for this since it has no mechanism to account for trends of any kind.
+
+Training data anomalies seriously impact the effectiveness of translation. Since the translation predictor makes no attempt to account for any sort of anomalies, these anomalies are simply preserved and translated into the prediction horizon.
+
+As one would expect, translation is very tolerant to anomalies in the prediction horizon. Since translation makes a long-term prediction, these anomalies won't have an effect on this predictors results until they are part of the training data the next week.
+
+\input{results/translation.tex}
+
+\section{Fast Fourier Transform}
+With an optimized smoothing percentage of 96\%, the FFT predictor performs slightly worse than the translation predictor for regular traffic, but sees a 40\% decrease in error for the training outage and an 87\% decrease in error for the training spike workload. While this is a large improvement, the amount of error we observed for the training anomalies was still higher than expected. In order to further investigate these results, we ran a second evaluation on the training outage workload, this time with 99\% filtering. This time we observed a 58\% decrease in error within the anomaly space over the 96\% smoothing run. We also observed a slight decrease in error for regular traffic as well.
+
+In this case, it seems that the tuner did not perform as we had hoped it to. Since there were no anomalies in the data which the \textsf{tuner} was run on, the optimal smoothing percentage was calculated without being able to take these kinds of anomalies into account. Further analysis of the deficiencies in our \textsf{tuner} implementation can be seen in \Cref{ch:conclusions}.
+
+Similarly to the translation predictor, FFT makes long term decisions, so its predictions are unaffected by anomalies in the prediction horizon.
+
+\input{results/fft.tex}
+
+\section{Linear Regression}
+Linear regression performs neck and neck with the translation baseline for regular traffic, but truly shines when presented with training anomalies. Since the Thiel-Sen estimator is tolerant to outliers, the anomalies present in the training data are largely ignored. We observe RMSD values within the anomaly space smaller than any predictor evaluated thus far.
+
+Again, as a long-term predictor, anomalies in the prediction horizon have no effect on the linear regression predictor's effectiveness.
+
+\input{results/regression.tex}
+
+\section{Discrete-Time Markov Chain}
+The Markov predictor produced the best results for most regular traffic scenarios we have seen so far, but as seen in \Cref{fig:markov_b,fig:markov_ho,fig:markov_ts,fig:markov_hs}, there are some peculiar anomalies present in its predictions. These sudden dips can likely be attributed to the periodic nature of the data. Since the transition probability matrix is based on the likelihood of moving between one bucket and another bucket, a perfect sine wave would produce a transition probability matrix where it is equally likely to move to a higher bucket or a lower bucket. Similarly, since our data is periodic, it is likely that in some cases the probability of moving to a lower bucket is more likely than moving to a higher bucket, even if there is an upwards trend in the observations.
+
+The Markov predictor is also very sensitive to anomalies in the prediction horizon. Since this predictor makes predictions only a short amount of time into the future, it is likely that a prediction will be made while an anomaly is occurring and be used as the base observation in the transition probability matrix.
+
+The short-term nature of this predictor also has repercussions on the \textsf{planner's} ability to do its job properly. This will be discussed further in \Cref{ch:conclusions}.
+
+\input{results/markov.tex}
+
+\section{Exponential Smoothing}
+While exponential smoothing produces results for regular traffic which are on par with the Markov predictor, exponential smoothing does not suffer from the anomalies seen in the Markov predictions.
+
+In the anomalous horizon workloads, we can see that not only does the prediction curve follow the anomalies, it also displays a ``bouncing'' effect. Since the goal of exponential smoothing is to produce a smooth curve, the quick turnaround when recovering from an outage of spike causes the prediction data to bounce before returning to a desirable state.
+
+Due to its short-term nature, exponential smoothing also suffers from the same issues present in the Markov predictor. Again, these issues will be discussed in \Cref{ch:conclusions}.
+
+\input{results/smoothing.tex}

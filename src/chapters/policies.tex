@@ -1,0 +1,108 @@
+\chapter{Predictors}
+\label{ch:policies}
+CRAFTS is designed to be able to apply a series of different prediction algorithms. This chapter outlines the predictors we have implemented and intend to evaluate.
+
+\section{Translation}
+As a baseline, CRAFTS takes the data from the previous training window and translates it onto the next scaling cycle. In the context of the Wikipedia workload, the translation predictor takes the previous week's traffic and overlays it onto the next week. Since it assumes the next week's traffic will be identical to the previous week, the translation predictor is intolerant to both usage spikes and outages. The translation predictor has no parameters which are configurable by the \textsf{tuner}.
+
+\section{Fast Fourier Transform}
+The fast Fourier transform predictor applies the fast Fourier transform algorithm specified in \Cref{sec:fft} to all of the values in the training window and then filters out the least prominent frequencies. What percentage of frequencies are removed is a parameter configurable by the \textsf{tuner}. An inverse fast Fourier transform is then performed on the data to convert it back from the frequency domain to the time domain. The result is then used as the prediction for the next prediction horizon. 
+
+By filtering out the least prominent frequencies, the FFT predictor is resistant to both outages and usage spikes. This is because these events should be sparse and non-repeating, or else they would be part of normal traffic patterns. Since these events are isolated, their frequencies will not be prominent in the frequency domain produced by the FFT and are likely to be filtered out.
+
+\begin{algorithm}[H]
+\KwData{$W =$ Training window data}
+\KwResult{$P =$ Prediction horizon data}
+\Begin{
+    $freqDom = FFT(W)$\;
+    $threshold = sort(freqDom)[len(freqDom) / 2]$\;
+    \For{$freq \in freqDom$}{
+        \If{$freq < threshold$}{
+            $freq = 0$\;
+        }
+    }
+    $P = inverseFFT(freqDom)$\;
+}
+\caption{FFT predictor}
+\end{algorithm}
+
+\section{Linear Regression}
+The linear regression predictor applies linear regression on data points from previous days at similar times in the training window in order to predict what traffic will look like on future days at that time. For each time in the prediction horizon the linear regression predictor looks back at that time in all previous days in the training window, samples a set of points around that time, and applies linear regression. The number of points sampled around each time is configured by the \textsf{tuner}.
+
+\begin{algorithm}[H]
+\KwData{$W =$ Training window data \\
+        $start =$ Time of the first prediction \\
+        $interval =$ Time between each observation \\
+        $end =$ Time of the last prediction}
+\KwResult{$P =$ Prediction horizon data}
+\Begin{
+    \For{$pTime = start; pTime < end; time += interval$}{
+        $rWindow =$ The points surrounding $pTime$ from the previous weeks in $W$\;
+        
+        $slopes = []$\;
+        \For{$(valueA, timeA) \in rWindow$}{
+            \For{$(valueB, timeB) \in rWindow$}{
+                $slopes.append((valueB - valueA) / (timeB - timeA))$\;
+            }
+        }
+        
+        $slope = sort(slopes)[len(slopes) / 2]$\;
+        
+        $lines = []$\;
+        \For{$(value, time) \in rWindow$}{
+            $lines.append(value - time * slope)$\;
+        }
+        
+        $intercept = sort(lines)[len(lines) / 2]$\;
+        
+        $P.append(pTime * slope + intercept)$\;
+    }
+}
+\caption{Regression Predictor}
+\end{algorithm}
+
+\section{Discrete-time Markov Chain}
+In order to make predictions using discrete-time Markov chains, \Cref{sec:chains}, this predictor uses all of the data in the training window in order to build the probability matrix. The number of buckets in the probability matrix is configured by the \textsf{tuner}. A data point $t$ time in the future is then estimated. The value of $t$ is configurable, but can never be smaller than the amount of time it takes to launch a VM. This is because predictions must be made far enough into the future that any necessary nodes can be brought online in time to handle the load at the time predicted.
+
+\begin{algorithm}[H]
+\KwData{$W =$ Training window data \\
+        $t =$ Number of observations into the future to be predicted}
+\KwResult{$P =$ Prediction horizon data}
+\Begin{
+    $pMatrix = [NUM\_BUCKETS][NUM\_BUCKETS]$\;
+    \For{$i = 0; i < len(W) - 1; i++$}{
+        $startBucket = bucket(W[i])$\;
+        $endBucket = bucket(W[i + 1])$\;
+        $pMatrix[startBucket][endBucket] += 1$\;
+    }
+    
+    \For{$elem \in pMatrix$}{
+        $elem = elem / len(W)$\;
+    }
+    
+    $lastBucket = bucket(W[len(w))$\;
+    $P = max(pMatrix^{t}[lastBucket])$\;
+}
+\caption{Markov Predictor}
+\end{algorithm}
+
+\section{Exponential Smoothing}
+The exponential smoothing predictor will take a sample of the data in the training window and apply exponential smoothing to estimate the next data point. In this case, the amount of data sampled from the training window is configured by the \textsf{tuner}.
+
+\begin{algorithm}[H]
+\KwData{$W =$ Training window data \\
+        $t =$ Number of observations into the future to be predicted}
+\KwResult{$P =$ Prediction horizon data}
+\Begin{
+    $s_t = W[1]$\;
+    $b_t = W[1] - W[0]$\;
+    \For{$elem \in W[2:]$}{
+        $s_{tp} = s_t$\;
+        $s_t = \alpha * elem + (1 - \alpha) * (s_t + b_t)$\;
+        $b_t = \beta * (s_t - s_{tp}) + (1 - \beta) * b_t$\;
+    }
+    
+    $P = s_t + (t * b_t)$\;
+}
+\caption{Exponential Smoothing Predictor}
+\end{algorithm}

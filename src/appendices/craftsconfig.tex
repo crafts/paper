@@ -1,0 +1,39 @@
+\chapter{CRAFTS Configuration Specification}
+\label[app]{ap:craftsconfig}
+CRAFTS offers a simple and extensible configuration system which exists in a JSON document stored in CouchDB. The following sections detail each of major components of CRAFTS configuration and the individual options within them.
+
+\section{Modules}
+Individual CRAFTS modules can be swapped out by changing their respective fields in the configuration file. The values for each module field should be a string which represents an importable module path. An example module configuration can be seen below.
+
+\section{Module-Specific Configurations}
+While none of the default CRAFTS modules have any additional configuration options. It is possible for extra configuration data to be passed to a custom module if necessary. To do this, create a configuration key whose name is the same as the class which the option will be passed to. Any data specified under this key will be passed directly to the module with that name.
+
+\section{Cycles}
+Most CRAFTS components are run on a configurable cycle which can be configured. Each of these cycles takes an integer value which represents the interval at which the component should be run (in seconds). The different cycles are as follows:
+\begin{itemize}
+\item \textbf{\texttt{monitoring\_cycle}}: The interval at which the MAL will query the monitoring data source. These requests are made in bulk so that load on the monitoring system can be kept to a minimum.
+\item \textbf{\texttt{scaling\_cycle}}: The amount of time between bulk scaling requests made by the planner.
+\item \textbf{\texttt{tuning\_cycle}}: How often the \textsf{tuner} should be run.
+\end{itemize}
+
+\section{Other}
+The VM acquisition delay (\texttt{vm\_delay}) can also be found in the configuration, as well as the magnitude of the linear transformation applied by the \textsf{planner} (\texttt{planner\_tolerance}).
+
+\begin{lstlisting}[language=json]
+{
+    "planner": "crafts.planner.simple.SimplePlanner",
+    "maldriver": "crafts.mal.null.NullMAL",
+    "scaler": "crafts.scaler.null.NullScaler",
+    "predictor": "my.custom.package.MyPredictor",
+    "tuner": "crafts.tuner.brute.BruteTuner",
+    
+    "MyPredictor": {"special_data": 1234},
+    
+    "monitoring_cycle": 86400,
+    "scaling_cycle": 3600,
+    "tuning_cycle": 2592000,
+    
+    "vm_delay": 900,
+    "planner_tolerance": 1.2
+}
+\end{lstlisting}

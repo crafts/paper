@@ -1,0 +1,118 @@
+\begin{table}[H]
+\centering
+\begin{tabular}{| l | l | l |}
+\hline
+Type & RMSD & Percent \\ \hline
+Under & 140 & 76.2\% \\ \hline
+Over & 61 & 23.8\% \\ \hline
+Total & 125 & \\ \hline
+\end{tabular}
+\caption{FFT predictor results for the baseline workload}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{results/graphs/fft_baseline.png}
+\caption{FFT prediction results for the baseline workload}
+\label{fig:fft_b}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{| l | l | l | l | l |}
+\hline
+Type & \multicolumn{2}{c |}{Regular} & \multicolumn{2}{c |}{Anomalous} \\ \hline
+ & RMSD & Percent & RMSD & Percent \\ \hline
+Under & 211 & 74.1\% & 1741 & 100.0\% \\ \hline
+Over & 85 & 25.9\% & 0 & 0.0\% \\ \hline
+Total & 186 & & 1741 & \\ \hline
+\end{tabular}
+\caption{FFT predictor results for the training outage workload with 96\% filtering}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{results/graphs/fft_training_outage_96.png}
+\caption{FFT prediction results for the training outage workload with 96\% filtering}
+\label{fig:fft_to96}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{| l | l | l | l | l |}
+\hline
+Type & \multicolumn{2}{c |}{Regular} & \multicolumn{2}{c |}{Anomalous} \\ \hline
+ & RMSD & Percent & RMSD & Percent \\ \hline
+Under & 195 & 75.0\% & 721 & 100.0\% \\ \hline
+Over & 88 & 25.0\% & 0 & 0.0\% \\ \hline
+Total & 175 & & 721 & \\ \hline
+\end{tabular}
+\caption{FFT predictor results for the training outage workload with 99\% filtering}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{results/graphs/fft_training_outage_99.png}
+\caption{FFT prediction results for the training outage workload with 99\% filtering}
+\label{fig:fft_to99}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{| l | l | l | l | l |}
+\hline
+Type & \multicolumn{2}{c |}{Regular} & \multicolumn{2}{c |}{Anomalous} \\ \hline
+ & RMSD & Percent & RMSD & Percent \\ \hline
+Under & 139 & 75.9\% & 0 & 0.0\% \\ \hline
+Over & 194 & 24.1\% & 2869 & 100.0\% \\ \hline
+Total & 154 & & 2869 & \\ \hline
+\end{tabular}
+\caption{FFT predictor results for the horizon outage workload}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{results/graphs/fft_horizon_outage.png}
+\caption{FFT prediction results for the horizon outage workload}
+\label{fig:fft_ho}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{| l | l | l | l | l |}
+\hline
+Type & \multicolumn{2}{c |}{Regular} & \multicolumn{2}{c |}{Anomalous} \\ \hline
+ & RMSD & Percent & RMSD & Percent \\ \hline
+Under & 143 & 74.6\% & 0 & 0.0\% \\ \hline
+Over & 86 & 25.4\% & 427 & 100.0\% \\ \hline
+Total & 131 & & 427 & \\ \hline
+\end{tabular}
+\caption{FFT predictor results for the training spike workload}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{results/graphs/fft_training_spike.png}
+\caption{FFT prediction results for the training spike workload}
+\label{fig:fft_ts}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{| l | l | l | l | l |}
+\hline
+Type & \multicolumn{2}{c |}{Regular} & \multicolumn{2}{c |}{Anomalous} \\ \hline
+ & RMSD & Percent & RMSD & Percent \\ \hline
+Under & 181 & 76.1\% & 3239 & 100.0\% \\ \hline
+Over & 61 & 23.9\% & 0 & 0.0\% \\ \hline
+Total & 161 & & 3239 & \\ \hline
+\end{tabular}
+\caption{FFT predictor results for the horizon spike workload}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{results/graphs/fft_horizon_spike.png}
+\caption{FFT prediction results for the horizon spike workload}
+\label{fig:fft_hs}
+\end{figure}

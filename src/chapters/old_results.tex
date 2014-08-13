@@ -1,0 +1,38 @@
+\chapter{Evaluation}
+
+In order to evaluate the effectiveness of CRAFTS' prediction methods, we run each of them on the workloads outlined in \Cref{ch:workloads}. At the beginning of each experiment, the tuner is run on the baseline workload to tune the parameters of the prediction algorithm. This is done to ensure that the tuning is done with minimal anomalies present. This will allow us to see how the prediction methods handle anomalous traffic under regular conditions. The effectiveness of each algorithm is measured using root mean squared deviation (RMSD), as discussed in \Cref{eq:rmsd}. We further break the results down into over-estimations and under-estimations, giving the RMSD for each as well as the percent of predictions which fell into each category. Each of the following sections will discuss how each predictor was evaluated and analyze their performance.
+
+\section{Translation}
+The translation predictor uses each week as the training set for the following week's predictions. The results of each week are then combined to create a single error measurement.
+
+We can see in \Cref{fig:translation_outage} how the translation predictor baseline is not tolerant to outages. The outage is directly replayed onto the next week which negatively influences our predictions. Similarly, we can see how anomalous spikes cause a similar effect in \Cref{fig:translation_spike}.
+
+\input{results/translation.tex}
+
+\section{Fast Fourier Transform}
+The fast Fourier transform predictor was evaluated in the same way as the translation predictor. In the baseline workload, the tuner found that filtering out 96\% of the weakest frequencies optimal.
+
+While the spike workloads were easily handled by the FFT predictor, we saw issues in the outage workloads. Although we attempt to smooth the data, we still find that the outage can noticeable disruptions in this predictors results. Further tests show that if the outage had been included in the tuning, the tuner determined that 98\% was the optimal percentage of the weakest frequencies to filter out. When running the predictor with this value, the outage hardly affects the prediction. For this parameter, the tuner likely does more harm than good. We want to filter out as much noise as possible while still making accurate predictions. In this case, it would be more desirable to take a parameter which causes higher inaccuracy some of the time, but is resistant to outages. This represents a scenario which the current implementation of the tuner is unable to optimize.
+
+\input{results/fft.tex}
+
+\section{Linear Regression}
+Since the linear regression predictor uses data spread across multiple weeks, only the final week was used for evaluation and the previous three weeks were used for training.
+
+RESULTS COMING SOON.
+
+\input{results/regression.tex}
+
+\section{Discrete-Time Markov Chain}
+The Markov predictor uses the first week of data as a training set and then performs a prediction on the next week. Tuning determined that 85 was the optimal number of buckets to use in this dataset.
+
+While the Markov predictor shows excellent results, its predictions are only accurate in the very short term. This makes it difficult to make optimal scaling decisions in the planner. The Markov predictor is also notably different from the previous predictors in that it does not do any form of translation on the training data. All training data is cummulatively used to generate the probability matrix and then used for predictions. This makes the Markov predictor very resistant to outages and load spikes, while it is still the most accurate predictor so far, both outages and spikes almost double its error.
+
+\input{results/markov.tex}
+
+\section{Exponential Smoothing}
+The exponential smoothing predictor was evaluated in the same way as the Markov predictor. It was determined that 0.6 and 0.3 were the optimal values for $\alpha$ and $\beta$, respectively.
+
+The exponential smoothing predictor shares many of the properties of the Markov predictor, but is more susceptible to anomalies in recent temporal data. This is not a problem, however, since the predictions are so short-term they simply accurately reflect the effect of the anomaly as it is occuring.
+
+\input{results/smoothing.tex}

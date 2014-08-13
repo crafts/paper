@@ -1,0 +1,22 @@
+\chapter{Future Work}
+While we are happy with the results of our evaluation of CRAFTS and its prediction methods, there is much more work which could be done in the future to improve CRAFTS.
+
+\section{Real-World Validation}
+The best way to test CRAFTS would be to integrate it with a real running system. Not necessarily executing scaling decisions, but running predictions and making them available through the web UI.
+
+\section{Larger Real-World Workloads}
+While we attempted to contact multiple parties in order to acquire further data for evaluation, most parties were unwilling to release the sort of information we require because it could potentially be used by competitors to gain insight into revenue and other derivative metrics. In the future, it would be nice to see companies release this sort of data anonymously for the purposes of assisting the research community.
+
+\section{Fault-Tolerance}
+Since CRAFTS would form a critical part of a services infrastructure, it is important that in the event of a node-failure, another node running CRAFTS could automatically begin making predictions.
+
+\section{Event Detection}
+One of the greatest weaknesses of CRAFTS' methods is the inability to handle load events which do not occur periodically and are not anomalous. These events could include posting a breaking story on a news site or the release of a new episode in a web-series. These sorts of events need to be accounted for when scaling, but do not show the kind of periodicity which CRAFTS is designed to detect.
+
+In the future, it would be great to see CRAFTS have the ability to detect these events and be able to recognize them in the future, or to a lesser extent, the ability for a user to be able to record an event and then initiate that event at a later time.
+
+\section{Secondary Predictors}
+Both the Markov chain and exponential smoothing predictors showed positive results making predictions a small amount of time into the future. If CRAFTS could support using one of these methods as a form of intelligent reactive scaling alongside one of its long-term prediction methods, it could improve the handling of anomalous events.
+
+\section{Alternative Applications}
+At its core, CRAFTS is a prediction pipeline. Data comes in, predictions are made, and actions are taken based on those predictions. This sort of pipeline could prove useful to other applications where these sort of automated predictions could prove useful. For example, in the field of computational finance, CRAFTS could be used to predict future stock prices and issue buy and sell orders based on its predictions.

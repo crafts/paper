@@ -1,0 +1,33 @@
+\chapter{ARTS Design}
+\label{ch:arts}
+
+\section{Layered Design}
+ARTS uses continuous transformations as well as discrete-time events in order to generate realistic workloads. To make these workloads more complex, ARTS may use multiple transformations and apply them on top of each other. The following sections define the different types of transformations and events supported by ARTS as well as how they interact.
+
+\subsection{Workload Base}
+The base serves to give the other transformations a set of initial values to perform transformations on. ARTS supports two kinds of bases, file and value. The file base reads in a newline delimited file of unix timestamp and value pairs. The value base takes a baseline value and duration as parameters and applies the baseline value constantly for the entire duration of the workload.
+
+\subsection{Continuous Transformations}
+Continuous transformations are functions which will be applied to the entire generated dataset. Multiple continuous transformations can be layered on top of each other in order to obtain more diverse data sets. These layers can be configured to either be summed with the current workload or be applied as a multiplier.
+
+\paragraph{Sinusoid.} Sinusoids are used to represent normal patterns seen in traffic. The resulting sine wave is centered around positive one and applied as a multiplier to the existing workload. The sinusoid transform takes an amplitude between zero and one and a frequency specified in days as parameters.
+
+\paragraph{Linear.} In order to represent steady growth (or decay) seen in the real-world traffic, we offer a linear transformation. The linear transformation takes a slope as a parameter and applies that slope to each point in the workload.
+
+\paragraph{Blur.} Real world traffic doesn't behave like a nice straight line, there are constant minor fluctuations in traffic patterns. The blur transformation takes the current workload and adds noise based on the Gaussian distribution. Using the current data point as the mean and a configurable standard deviation, a new value is generated and inserted back into the workload.
+
+\subsection{Discrete-time Events}
+A discrete-time event represents an anomaly in the input data which can be difficult to predict and could invalidate historical data. These events can occur multiple times and are configured with start and end times within the workload. ARTS supports the following discrete-time events:
+\begin{itemize}
+    \item Outages, a period of time in which all generated data is zero.
+    \item Usage spikes, a short period of time when a large multiplier is applied to the base load.
+\end{itemize}
+
+\section{Output}
+Workloads output by ARTS are passed to handlers. Handlers are called as each value is generated for processing. For our purposes, we have built a handler which inserts each data point into the CRAFTS intermediate store. We also provide a file handler so that workloads may be output to file and run again in the future.
+
+\section{Reading from File}
+ARTS can read data from an input file and either directly pass the values to handlers or use the data as a basis for a new workload, applying continuous transformations and discrete-time events on top of it. This can be useful if we want to apply discrete-time events to real-world data sets to see how it might change the accuracy of our predictions.
+
+\section{Job Configuration}
+ARTS takes a JSON configuration file as input. This file specifies the different layers and events, as well as their parameters, which the job will be comprised of. The format of this file can be found in \Cref{ap:artsconfig}.
